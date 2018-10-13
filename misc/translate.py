@@ -12,8 +12,8 @@ def translate(text, fromLang="auto", toLang="zh-CN"):
     headers = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'
     }
-    url = "http://translate.google.cn/m?tl={0}&sl={1}&q={2}".format(
-        toLang, fromLang, html.escape(prep_query(text)))
+    url = "http://translate.google.com/m?tl={0}&sl={1}&q={2}".format(
+        toLang, fromLang, prep_query(text))
     request = urllib.request.Request(url, headers=headers)
     try:
         # bytes to utf-8 encoding
