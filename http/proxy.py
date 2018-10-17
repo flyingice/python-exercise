@@ -16,8 +16,7 @@ try:
         'http://whatismyip.host').read().decode('utf-8')
     regex = r'<p class="ipaddress">(.*?)</p>'
     res = re.findall(regex, data)
+    if res:
+        print('Your IPv4 address is:', res[0])
 except Exception as err:
     print(err)
-
-if res:
-    print('Your IPv4 address is:', res[0])
