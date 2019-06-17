@@ -1,0 +1,42 @@
+# Prerequisites
+*.d
+
+# Compiled object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled headers
+*.gch
+*.pch
+
+# Compiled dynamic libraries
+*.so
+.dylib
+*.dll
+*.dSYM
+__pycache__
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+run
+
+# MacOS specific
+.DS_Store
+
+# vscode metadata
+info.plist
+.vscode/ipch
