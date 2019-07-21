@@ -1,5 +1,6 @@
 import logging
 import mapreduce
+import os
 
 
 class WorkerDefault(object):

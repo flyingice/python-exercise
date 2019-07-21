@@ -1,24 +1,28 @@
 import logging
 
+# Here shows a simple example of word counting program
 
-# generate finer-granularity tasks
+
+# To be defined by user: generate finer-granularity tasks
 def split_task(task):
-    return []
+    return [get_task_filename(i) for i in range(2)]
 
 
-# map_function is called once per file
+# To be defined by user: map_function is called once per file
 def map_function(content):
-    return list()
+    words = content.split()
+    list_key_value = [(word, '1') for word in words]
+    return list_key_value
 
 
-# reduce_function is called once per key
+# To be defined by user: reduce_function is called once per key
 def reduce_function(key, values):
-    return ""
+    return str(len(values))
 
 
 def do_map(filename):
     try:
-        with open(filename, 'rb') as infile:
+        with open(filename, 'r') as infile:
             content = infile.read()
             list_key_value = map_function(content)
         # simplified model with only one reducer
@@ -38,14 +42,16 @@ def do_reduce(task_number):
             with open(get_map_filename(i, 0), 'r') as infile:
                 for line in infile:
                     key, value = line.split(' ')
+                    if key not in map_key_value:
+                        map_key_value[key] = []
                     map_key_value[key].append(value)
 
         for key, values in map_key_value.items():
             map_key_value[key] = reduce_function(key, values)
 
         with open(get_reduce_filename(0), 'w') as outfile:
-            for key, value in sorted(map_key_value):
-                outfile.write(key + ' ' + value + '\n')
+            for key in sorted(map_key_value):
+                outfile.write(key + ' ' + map_key_value[key] + '\n')
 
     except OSError as err:
         logging.error(err)
