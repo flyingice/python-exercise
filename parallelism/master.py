@@ -1,37 +1,49 @@
 import logging
+import mapreduce
 import multiprocessing as mp
-import policy
-import worker
+import os
+import os.path
+import policydefault
+import workerdefault
 
 
 class Master(object):
-    def __init__(self, policy=policy.Policy()):
-        self.policy = policy
+    def __init__(self, task, policy=policydefault.PolicyDefault()):
+        self.__task = task
+        self.__policy = policy
 
-        # root logger settings
-        logging.getLogger().setLevel(self.policy.get_logging_level())
-
-    def register_worker(self, worker):
-        self.worker = worker
+        self.prepare()
 
     def prepare(self):
-        pass
+        # root logger settings
+        logging.getLogger().setLevel(self.__policy.get_logging_level())
+        # setup working dir
+        if not os.path.exists(self.__policy.get_working_dir()):
+            os.makedirs(self.__policy.get_working_dir())
+        os.chdir(self.__policy.get_working_dir())
+        # split the task
+        self.__tasks = mapreduce.split_task(self.__task)
 
-    def map_task(self, map_function, args=()):
+    def register_worker(self, worker):
+        self.__worker = worker
+
+    def map_task(self):
         if not 'worker' in self.__dict__:
-            self.worker = worker.Worker
+            self.__worker = workerdefault.WorkerDefault
 
         try:
-            tasks = map_function(args)
-            with mp.Pool(processes=self.policy.get_parallelism_degree()) as pool:
-                res = pool.map(self.worker(), tasks)
+            with mp.Pool(processes=self.__policy.get_parallelism_degree()) as pool:
+                pool.map(self.__worker(), self.__tasks)
+
+        except OSError as err:
+            logging.error(err)
         except mp.ProcessError as err:
             logging.error(err)
         finally:
-            return res if 'res' in locals() else []
+            pool.close()
 
-    def reduce_task(self, reduce_function, args=()):
-        return reduce_function(args)
+    def reduce_task(self):
+        return mapreduce.do_reduce(len(self.__tasks))
 
     def cleanup(self):
         pass
