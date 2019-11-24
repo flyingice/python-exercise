@@ -5,9 +5,9 @@ import os.path
 import paramiko
 import socket
 
-hostname = 'ssh.freeshells.org'
-username = 'flyingice'
-keyfile = '~/.ssh/freeshells.key'
+hostname = 'ec2-15-188-69-16.eu-west-3.compute.amazonaws.com'
+username = 'ec2-user'
+keyfile = '~/.ssh/EC2-default.key'
 command = 'date'
 
 
