@@ -40,6 +40,3 @@ run
 # vscode metadata
 info.plist
 .vscode/ipch
-
-# misc
-user.conf
