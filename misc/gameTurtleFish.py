@@ -49,7 +49,9 @@ class Turtle(Movable):
 
     def eat(self):
         self.stamina += self.stamina_inc
-        self.stamina = self.stamina_max if self.stamina > self.stamina_max else self.stamina
+        self.stamina = (
+            self.stamina_max if self.stamina > self.stamina_max else self.stamina
+        )
 
     def move(self):
         if self.dead():
@@ -60,7 +62,6 @@ class Turtle(Movable):
 
 
 class Fish(Movable):
-
     def __init__(self, name, **args):
         self.name = name
         super().__init__(**args)
@@ -75,10 +76,21 @@ class Game(object):
         self.turtle_step = 2
         self.fish_step = 1
         self.round = 0
-        self.turtle_list = [Turtle(name=i, x_range=self.x_range, y_range=self.y_range,
-                                   step=self.turtle_step) for i in range(self.turtle_nb)]
-        self.fish_list = [Fish(name=i, x_range=self.x_range, y_range=self.y_range,
-                               step=self.fish_step) for i in range(self.fish_nb)]
+        self.turtle_list = [
+            Turtle(
+                name=i,
+                x_range=self.x_range,
+                y_range=self.y_range,
+                step=self.turtle_step,
+            )
+            for i in range(self.turtle_nb)
+        ]
+        self.fish_list = [
+            Fish(
+                name=i, x_range=self.x_range, y_range=self.y_range, step=self.fish_step
+            )
+            for i in range(self.fish_nb)
+        ]
 
     def not_end(self):
         return self.turtle_list and self.fish_list
@@ -114,23 +126,31 @@ class Game(object):
         for x in range(self.x_range[0], self.x_range[1]):
             line = []
             for y in range(self.y_range[0], self.y_range[1]):
-                tag = 'T' if (x, y) in [turtle.pos() for turtle in self.turtle_list] else 'F' if (
-                    x, y) in [fish.pos() for fish in self.fish_list] else 'O'
+                tag = (
+                    "T"
+                    if (x, y) in [turtle.pos() for turtle in self.turtle_list]
+                    else "F"
+                    if (x, y) in [fish.pos() for fish in self.fish_list]
+                    else "O"
+                )
                 line.append(tag)
-            board.append(' '.join(line))
+            board.append(" ".join(line))
 
-        print('ROUND {0}: {1} turtle(s) and {2} fish left:'.format(
-            self.round, len(self.turtle_list), len(self.fish_list)))
+        print(
+            "ROUND {0}: {1} turtle(s) and {2} fish left:".format(
+                self.round, len(self.turtle_list), len(self.fish_list)
+            )
+        )
         for i in range(len(board)):
             print(board[i])
-        print('')
+        print("")
 
     def winner(self):
-        return 'TURTLE' if self.turtle_list else 'FISH'
+        return "TURTLE" if self.turtle_list else "FISH"
 
 
-print('GAME BEGIN!\n')
+print("GAME BEGIN!\n")
 game = Game()
 while game.not_end():
     game.next_turn()
-print('GAME END. WINNER: {0}!'.format(game.winner()))
+print("GAME END. WINNER: {0}!".format(game.winner()))

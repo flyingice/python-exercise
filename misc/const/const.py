@@ -10,4 +10,5 @@ class Const(object):
 
 
 import sys
+
 sys.modules[__name__] = Const()

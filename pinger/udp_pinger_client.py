@@ -1,7 +1,7 @@
 import socket
 import time
 
-HOST = 'localhost'
+HOST = "localhost"
 PORT = 12000
 MAX_ATTEMPTS = 10
 TIMEOUT = 1

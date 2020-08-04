@@ -2,9 +2,9 @@ import random
 import re
 import urllib.request
 
-proxy_list = ['39.135.11.166:8080', '111.7.130.101:8080', '120.131.9.254:1080']
+proxy_list = ["39.135.11.166:8080", "111.7.130.101:8080", "120.131.9.254:1080"]
 
-handler = urllib.request.ProxyHandler({'http': random.choice(proxy_list)})
+handler = urllib.request.ProxyHandler({"http": random.choice(proxy_list)})
 opener = urllib.request.build_opener(handler)
 # The following line might be needed to avoid HTTP Error 403: Forbidden
 # opener.addheaders = [
@@ -12,11 +12,10 @@ opener = urllib.request.build_opener(handler)
 urllib.request.install_opener(opener)
 
 try:
-    data = urllib.request.urlopen(
-        'http://whatismyip.host').read().decode('utf-8')
+    data = urllib.request.urlopen("http://whatismyip.host").read().decode("utf-8")
     regex = r'<p class="ipaddress">(.*?)</p>'
     res = re.findall(regex, data)
     if res:
-        print('Your IPv4 address is:', res[0])
+        print("Your IPv4 address is:", res[0])
 except Exception as err:
     print(err)

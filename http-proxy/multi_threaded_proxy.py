@@ -29,20 +29,24 @@ class HttpProxy(threading.Thread):
             request = self.sock.recv(BUF_SIZE)
             # forward the http request to the original server
             host = str()
-            for line in request.decode().split('\r\n'):
-                if line[:5].upper() == 'HOST:':
+            for line in request.decode().split("\r\n"):
+                if line[:5].upper() == "HOST:":
                     host = line.split()[1]
 
             if host:
                 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_sock:
                     server_sock.connect((host, 80))
                     logging.debug(
-                        "forwarding the http request to {0}:\r\n{1}".format(host, request))
+                        "forwarding the http request to {0}:\r\n{1}".format(
+                            host, request
+                        )
+                    )
                     server_sock.send(request)
 
                     reply = server_sock.recv(BUF_SIZE)
                     logging.debug(
-                        "forwarding the http reply to client:\r\n{}".format(reply))
+                        "forwarding the http reply to client:\r\n{}".format(reply)
+                    )
                     self.sock.send(reply)
             else:
                 logging.error("can not determine host")
@@ -53,7 +57,7 @@ class HttpProxy(threading.Thread):
             self.sock.close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     logging.getLogger().setLevel(logging.DEBUG)
     logging.info("start http proxy...")
     # CTRL+C to stop the server
@@ -62,7 +66,7 @@ if __name__ == '__main__':
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         # prevent '[Errno 98] Address already in use' in case of too short delay between executions
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        sock.bind(('', PORT))
+        sock.bind(("", PORT))
         sock.listen(MAX_CONNECTION)
         while True:
             try:

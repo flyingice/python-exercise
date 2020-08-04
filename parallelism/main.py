@@ -9,7 +9,7 @@ import sys
 # def map_function(content)
 # def reduce_function(key, values)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     master = master.Master(task=sys.argv[1:])
     master.map_task()
     master.reduce_task()

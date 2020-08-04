@@ -10,7 +10,7 @@ import socket
 serverSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 # Assign IP address and port number to socket
-serverSocket.bind(('', 12000))
+serverSocket.bind(("", 12000))
 
 while True:
     # Generate random number in the range of 0 to 10

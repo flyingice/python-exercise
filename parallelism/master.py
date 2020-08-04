@@ -28,7 +28,7 @@ class Master(object):
         self.__worker = worker
 
     def map_task(self):
-        if not 'worker' in self.__dict__:
+        if not "worker" in self.__dict__:
             self.__worker = workerdefault.WorkerDefault
 
         try:

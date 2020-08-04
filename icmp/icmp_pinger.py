@@ -21,28 +21,27 @@ def checksum(packet_bytes):
     while count < count_to:
         this_val = packet_bytes[count + 1] * 256 + packet_bytes[count]
         csum = csum + this_val
-        csum = csum & 0xffffffff
+        csum = csum & 0xFFFFFFFF
         count = count + 2
 
     if count_to < len(packet_bytes):
         csum = csum + packet_bytes[len(packet_bytes) - 1]
-        csum = csum & 0xffffffff
+        csum = csum & 0xFFFFFFFF
 
-    csum = (csum >> 16) + (csum & 0xffff)
+    csum = (csum >> 16) + (csum & 0xFFFF)
     csum = csum + (csum >> 16)
     answer = ~csum
-    answer = answer & 0xffff
-    answer = answer >> 8 | (answer << 8 & 0xff00)
+    answer = answer & 0xFFFF
+    answer = answer >> 8 | (answer << 8 & 0xFF00)
 
     return answer
 
 
 def validateChecksum(packet):
-    resType, resCode, chk, id, seq, timestamp = struct.unpack_from(
-        "bbHHhd", packet, 20)
+    resType, resCode, chk, id, seq, timestamp = struct.unpack_from("bbHHhd", packet, 20)
     # replace checksum field with all 0
     packet = struct.pack("bbHHhd", resType, resCode, 0, id, seq, timestamp)
-    return socket.htons(checksum(packet)) & 0xffff == chk
+    return socket.htons(checksum(packet)) & 0xFFFF == chk
 
 
 def calculateStat(sig, frame):
@@ -51,13 +50,22 @@ def calculateStat(sig, frame):
     global statList
     nTotal = len(statList)
     nLost = statList.count(-1)
-    print("{0} packets transmitted, {1} packets received, {2:.1f}% packet loss".format(
-        nTotal, nTotal - nLost, nLost / nTotal * 100 if nTotal > 0 else 0))
+    print(
+        "{0} packets transmitted, {1} packets received, {2:.1f}% packet loss".format(
+            nTotal, nTotal - nLost, nLost / nTotal * 100 if nTotal > 0 else 0
+        )
+    )
 
     statList = list(filter(lambda x: x != -1, statList))
     try:
-        print("round-trip min/avg/max/stddev = {0:.3f}/{1:.3f}/{2:.3f}/{3:.3f} ms".format(min(
-            statList) * 1000, statistics.mean(statList) * 1000, max(statList) * 1000, statistics.stdev(statList) * 1000))
+        print(
+            "round-trip min/avg/max/stddev = {0:.3f}/{1:.3f}/{2:.3f}/{3:.3f} ms".format(
+                min(statList) * 1000,
+                statistics.mean(statList) * 1000,
+                max(statList) * 1000,
+                statistics.stdev(statList) * 1000,
+            )
+        )
     except statistics.StatisticsError:
         pass
 
@@ -70,7 +78,7 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
     while True:
         startedSelect = time.time()
         whatReady = select.select([mySocket], [], [], timeLeft)
-        howLongInSelect = (time.time() - startedSelect)
+        howLongInSelect = time.time() - startedSelect
         if not whatReady[0]:  # Timeout
             statList.append(-1)
             return "Request timed out."
@@ -83,11 +91,11 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
     # Fetch the ICMP header from the IP packet
     # The header of IP packet 20-byte long.
     ttl = struct.unpack_from("b", recPacket, 8)[0]
-    resType, resCode, _, _, seq, timestamp = struct.unpack_from(
-        "bbHHhd", recPacket, 20)
+    resType, resCode, _, _, seq, timestamp = struct.unpack_from("bbHHhd", recPacket, 20)
     if validateChecksum(recPacket) and resType == ICMP_ECHO_REPLY and resCode == 0:
         stat = "{0} bytes from {1}: icmp_seq={2} ttl={3} time={4:.3f} ms".format(
-            len(recPacket), addr[0], seq, ttl, 1000*(timeReceived - timestamp))
+            len(recPacket), addr[0], seq, ttl, 1000 * (timeReceived - timestamp)
+        )
 
     timeLeft -= howLongInSelect
 
@@ -113,9 +121,9 @@ def sendOnePing(mySocket, destAddr, ID):
     myChecksum = checksum(header + data)
 
     # Get the right checksum, and put in the header
-    if sys.platform == 'darwin':
+    if sys.platform == "darwin":
         # Convert 16bit integers from host to network byte order
-        myChecksum = socket.htons(myChecksum) & 0xffff
+        myChecksum = socket.htons(myChecksum) & 0xFFFF
     else:
         myChecksum = socket.htons(myChecksum)
 
@@ -148,8 +156,13 @@ def ping(host, timeout=1):
 
     dest = socket.gethostbyname(host)
     version = sys.version_info
-    print("Pinging " + dest +
-          " using Python {0}.{1}.{2}:".format(version.major, version.minor, version.micro))
+    print(
+        "Pinging "
+        + dest
+        + " using Python {0}.{1}.{2}:".format(
+            version.major, version.minor, version.micro
+        )
+    )
 
     # Send ping requests to a server separated by approximately one second
     while True:
@@ -160,7 +173,7 @@ def ping(host, timeout=1):
     return delay
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     host = "www.baidu.com"
     signal.signal(signal.SIGINT, calculateStat)
     ping(host)

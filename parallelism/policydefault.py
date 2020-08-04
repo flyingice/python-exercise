@@ -14,7 +14,7 @@ class PolicyDefault(object):
         return multiprocessing.cpu_count()
 
     def get_working_dir(self):
-        return os.path.join(os.getenv('TMPDIR'), 'mapreduce')
+        return os.path.join(os.getenv("TMPDIR"), "mapreduce")
 
     def get_auto_cleanup(self):
         return False
